@@ -22,12 +22,13 @@ const CardImage = styled.img`
 `
 
 
-function Card({person}) {
+function Card({person, filter}) {
   const URL_IMAGE = 'https://starwars-databank-server.vercel.app/api/v1/characters/name/'
 
   const context = React.useContext(ContextPeople)
 
   const [planetInfos, setPlanetInfos] = React.useState({})
+  const [starshipInfos, setStarshipInfos] = React.useState([])
   const [image, setImage] = React.useState({})
 
     async function getPlanetInfos(url){
@@ -36,7 +37,22 @@ function Card({person}) {
             if(response.ok && response.status === 200){
                 const data = await response.json()
                 setPlanetInfos(data)
-                context.setPlanetArray(prevArray => [...prevArray, data])
+                if(!filter && !context.block) context.setPlanetArray(prevArray => [...prevArray, data])
+            }
+        }
+
+        catch(error){   
+            console.error('erros: ', error)
+        }
+    }
+
+    async function getPersonStarship(url){
+        try{
+            const response = await fetch(url)
+            if(response.ok && response.status === 200){
+                const data = await response.json()
+                setStarshipInfos(prevArray => [...prevArray, data])
+                if(!filter && !context.block) context.setStarshipArray(prevArray => [...prevArray, data])
             }
         }
 
@@ -63,6 +79,12 @@ function Card({person}) {
     if(person.homeworld) getPlanetInfos(person.homeworld)
 
     if(person.name) getPersonImage(person.name)
+
+    if(person.starships && person.starships.length > 0) {
+        person.starships.forEach((starship) => {
+            getPersonStarship(starship)
+        })        
+    }
   }, [])
 
   return (
@@ -78,6 +100,9 @@ function Card({person}) {
         {planetInfos && <p>Terreno {planetInfos.terrain}</p>}
         {planetInfos && <p>Clima {planetInfos.climate}</p>}
         {planetInfos && <p>População {planetInfos.population}</p>}
+        {starshipInfos && starshipInfos.map((starship) => (
+            <p>Nave {starship.name}</p>
+        ))}
     </CardBox>
   )
 }

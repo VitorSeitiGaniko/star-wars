@@ -5,6 +5,7 @@ import { ContextProvider } from './context/Context.jsx'
 import styled from 'styled-components'
 import Search from './components/Search/Search.jsx'
 import Filter from './components/Filter/Filter.jsx'
+import ModalCard from './components/ModalCard/ModalCard.jsx'
 
 const ContainerApp = styled.div`
   display: flex;
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')).render(
       <Search />
       <Filter />
       <ContainerCards />
+      <ModalCard />
     </ContainerApp>
   </ContextProvider>
   

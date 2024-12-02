@@ -13,15 +13,22 @@ function ContainerCards() {
     const context = React.useContext(ContextPeople)
 
     const [loading, setLoading] = React.useState(true)    
+    const [nextPage, setNextPage] = React.useState('')
+    const [prevPage, setPrevPage] = React.useState('')
 
-    async function getPeople(){
+    async function getPeople(url){
         try{
-            const response = await fetch('https://swapi.dev/api/people')
+            const response = await fetch(url)
             if(response.ok && response.status === 200){
                 const data = await response.json()
                 console.log(data);
                 
+                context.setPlanetArray([])
+                context.setStarshipArray([])
                 context.setPeopleArray(data.results)
+                context.setRemove(true)
+                if(data.previous) setPrevPage(data.previous)
+                if(data.next) setNextPage(data.next)
             }
         }
     
@@ -31,7 +38,7 @@ function ContainerCards() {
     }    
 
     React.useEffect(() => {
-        getPeople()
+        getPeople('https://swapi.dev/api/people')
     }, [])
     
     React.useEffect(() => {
@@ -40,11 +47,19 @@ function ContainerCards() {
     
     
   return (
-    <CardContainer>
-        {!loading && context.peopleArray.map((person, index) => (
-            <Card key={person.name+index} person={person}/>
-        ))}
-    </CardContainer>
+    <>
+        <CardContainer>
+            {!loading && !context.isSearchList && context.peopleArray.map((person, index) => (
+                <Card key={person.name+index} person={person}/>
+            ))}
+
+            {!loading && context.isSearchList && context.peopleFilteredArray.map((person, index) => (
+                <Card key={person.name+index} person={person} filter={true}/>
+            ))}
+        </CardContainer>
+        {!context.isSearchList && prevPage && <button onClick={() => getPeople(prevPage)}>Página Anterior</button>}
+        {!context.isSearchList && nextPage && <button onClick={() => getPeople(nextPage)}>Próxima página</button>}
+    </>    
   )
 }
 

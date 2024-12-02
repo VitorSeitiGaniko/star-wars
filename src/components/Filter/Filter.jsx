@@ -15,6 +15,9 @@ function Filter() {
         
         const uniquePlanets = [];
         const names = new Set();
+
+        const uniquePlanets02 = [];
+        const names02 = new Set();
     
         context.planetArray.forEach(planet => {
             if (!names.has(planet.name)) {
@@ -22,46 +25,75 @@ function Filter() {
                 uniquePlanets.push(planet);
             }
         });
+
+        context.starshipArray.forEach(planet => {
+            if (!names02.has(planet.name)) {
+                names02.add(planet.name);
+                uniquePlanets02.push(planet);
+            }
+        });
+
+        console.log('context.planetArray: 02 ', uniquePlanets);
     
         context.setPlanetArray(uniquePlanets);
+        context.setStarshipArray(uniquePlanets02);
         setLoading(true)
+        context.setRemove(false)
     }
 
-    function handleSelected(event){
+
+    function applyCombinedFilter(event) {
         event.preventDefault()
-
-        setSelectedPlanet(event.target.value)
-        applyFilter()
-    }
-
-    function applyFilter(){
+        //context.setBlock(true)
+        context.setUsSearchList(true);
         const arrayFiltered = context.peopleArray.filter((person) => {
-            return person.homeworld === selectedPlanet
-        })
+            const matchesPlanet = selectedPlanet ? person.homeworld === selectedPlanet : true ;
+            const matchesStarship = filterStarship ? person.starships && person.starships.length > 0 && person.starships.some((starship) => starship === filterStarship) : true;
+            return matchesPlanet && matchesStarship;
+        });
         console.log('arrayFiltered: ', arrayFiltered);
         
-        //context.setPeopleArray(arrayFiltered)
+        context.setPeopleFilteredArray(arrayFiltered);
     }
 
     React.useEffect(() => {
-        if(context.planetArray.length > 0 && context.planetArray.length === context.peopleArray.length && !loading) removeDuplicates()
+        if(context.planetArray.length > 0 && 
+           context.planetArray.length === context.peopleArray.length
+           && context.remove
+        ) {
+            removeDuplicates()
+        }
     }, [context.planetArray])
 
   return (
     <div>
-        <form onSubmit={handleSelected}>
+        <form>
             <label>Planeta</label>
-            <select onChange={handleSelected}>
+            <select value={selectedPlanet} onChange={(e) => setSelectedPlanet(e.target.value)}>
                 <option defaultValue="Selecione um planeta">
                     Selecione um planeta
                 </option>
-                {context.planetArray && context.planetArray.length > 0 && context.planetArray.map((planet) => (
+                {loading && context.planetArray && context.planetArray.length > 0 && context.planetArray.map((planet) => (
+                    <option key={planet.name} value={planet.url}>{planet.name}</option>
+                ))}
+            </select>
+
+            <label>Nave espacial</label>
+            <select value={filterStarship} onChange={(e) => setFilterStarship(e.target.value)}>
+                <option defaultValue="Selecione uma nave">
+                    Selecione uma nave
+                </option>
+                {loading && context.starshipArray && context.starshipArray.length > 0 && context.starshipArray.map((planet) => (
                     <option key={planet.name} value={planet.url}>{planet.name}</option>
                 ))}
                 
             </select>
-            <button onClick={handleSelected}>Pesquisar</button>
+            <button onClick={applyCombinedFilter}>Pesquisar</button>
         </form>
+        <button onClick={() => {
+            context.setUsSearchList(false)
+            context.setBlock(true)
+        }}>LIMPAR</button>
     </div>
   )
 }

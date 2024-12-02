@@ -8,6 +8,8 @@ function Search() {
 
     async function handleSubmit(event){
         event.preventDefault()
+        context.setUsSearchList(false)
+
 
         try{
             const response = await fetch(`https://swapi.dev/api/people/?search=${inputSearch}`)
@@ -15,6 +17,9 @@ function Search() {
                 const data = await response.json()
                 console.log(data);
                 
+                context.setPlanetArray([])
+                context.setStarshipArray([])
+                context.setRemove(true)
                 context.setPeopleArray(data.results)
             }
         }
