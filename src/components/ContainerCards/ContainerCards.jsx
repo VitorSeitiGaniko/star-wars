@@ -10,55 +10,72 @@ const CardContainer = styled.div`
 `
 
 function ContainerCards() {
+    const URL_PERSON = 'https://swapi.dev/api/people'
     const context = React.useContext(ContextPeople)
 
-    const [loading, setLoading] = React.useState(true)    
-    const [nextPage, setNextPage] = React.useState('')
-    const [prevPage, setPrevPage] = React.useState('')
-
     async function getPeople(url){
+        context.setLoading(true)
+        
+        context.setNextPage('')
+        context.setPrevPage('')
+
         try{
             const response = await fetch(url)
             if(response.ok && response.status === 200){
                 const data = await response.json()
-                console.log(data);
-                
+                console.log('DATA LIST  ==> ', data);
+
                 context.setPlanetArray([])
                 context.setStarshipArray([])
+                context.setSpecieArray([])
                 context.setPeopleArray(data.results)
                 context.setRemove(true)
-                if(data.previous) setPrevPage(data.previous)
-                if(data.next) setNextPage(data.next)
+
+                if(data.previous) context.setPrevPage(data.previous)
+                if(data.next) context.setNextPage(data.next)
             }
         }
     
         catch(error){   
             console.error('erros: ', error)
         }
-    }    
+    }
+
+    function handlePrevPage(){
+        getPeople(context.prevPage)
+        context.setPlanetArray([])
+        context.setStarshipArray([])
+        context.setSpecieArray([])
+        context.setAllowPush(true)
+    }
+
+    function handleNextPage(){
+        getPeople(context.nextPage)
+        context.setPlanetArray([])
+        context.setStarshipArray([])
+        context.setSpecieArray([])
+        context.setAllowPush(true)
+    }
 
     React.useEffect(() => {
-        getPeople('https://swapi.dev/api/people')
+        getPeople(URL_PERSON)
     }, [])
-    
-    React.useEffect(() => {
-        if(context.peopleArray && context.peopleArray.length > 0) setLoading(false)
-    }, [context.peopleArray])
-    
-    
+
   return (
-    <>
+    <>        
         <CardContainer>
-            {!loading && !context.isSearchList && context.peopleArray.map((person, index) => (
-                <Card key={person.name+index} person={person}/>
+            {!context.isFilterList && context.peopleArray.map((person, index) => (
+            <Card key={person.name + index} person={person} />
             ))}
 
-            {!loading && context.isSearchList && context.peopleFilteredArray.map((person, index) => (
-                <Card key={person.name+index} person={person} filter={true}/>
+            {context.isFilterList && context.peopleFilteredArray.map((person, index) => (
+            <Card key={person.name + index} person={person} filter={true} />
             ))}
         </CardContainer>
-        {!context.isSearchList && prevPage && <button onClick={() => getPeople(prevPage)}>Página Anterior</button>}
-        {!context.isSearchList && nextPage && <button onClick={() => getPeople(nextPage)}>Próxima página</button>}
+        
+        {!context.loading && !context.isFilterList && context.prevPage && <button onClick={handlePrevPage}>Página Anterior</button>}
+
+        {!context.loading && !context.isFilterList && context.nextPage && <button onClick={handleNextPage}>Próxima página</button>}
     </>    
   )
 }

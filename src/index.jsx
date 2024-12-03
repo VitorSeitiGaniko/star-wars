@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import Search from './components/Search/Search.jsx'
 import Filter from './components/Filter/Filter.jsx'
 import ModalCard from './components/ModalCard/ModalCard.jsx'
+import Loading from './components/Loading/Loading.jsx'
 
 const ContainerApp = styled.div`
   display: flex;

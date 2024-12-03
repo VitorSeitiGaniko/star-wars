@@ -1,5 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
+import { ContextPeople } from '../../context/Context'
+import unknownImage from '../../assets/unknown.png'
 
 const Overlay = styled.div`
     position: fixed;
@@ -29,19 +31,78 @@ const Modal = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 112px;
+    height: 80vh;
     width: 600px;
-    padding: 24px;
+    padding: 32px;
+    color: var(--black);
+    overflow-y: auto;
+`
+
+const Image = styled.img`
+    width: 100%;
+    height: 330px;
+    object-fit: cover;
+    border-radius: 6px;
+`
+
+const Title = styled.h2`
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--black);
+`
+
+const Subtitle = styled.h3`
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--black);
 `
 
 function ModalCard() {
-  return (
-    <Overlay>
-        <Container>
-            <Modal></Modal>
-        </Container>
-    </Overlay>
-  )
-}
+    const context = React.useContext(ContextPeople)
+
+    return (
+        <>
+            {context.openModal && (
+            <>
+            <Overlay onClick={() => context.setOpenModal(false)}>
+            </Overlay>
+            <Container>
+                <Modal>
+                    <Image src={context.personSelected.image || unknownImage} alt={context.personSelected.person.name} />
+                    <Title>Nome: {context.personSelected.person.name}</Title>
+                    <p>Altura(m) {context.personSelected.person.height}</p>
+                    <p>Peso(Kg) {context.personSelected.person.mass}</p>
+                    <p>Gênero {context.personSelected.person.gender}</p>
+                    <p>Ano de Nascimento {context.personSelected.person.birth_year}</p>
+                    <p>Quantidade de filmes {context.personSelected.person.films.length}</p>
+
+                    {context.personSelected.planetInfos && (
+                        <Subtitle>Planeta</Subtitle>
+                    )}
+                    {context.personSelected.planetInfos && <p>Nome {context.personSelected.planetInfos.name}</p>}
+                    {context.personSelected.planetInfos && <p>Terreno {context.personSelected.planetInfos.terrain}</p>}
+                    {context.personSelected.planetInfos && <p>Clima {context.personSelected.planetInfos.climate}</p>}
+                    {context.personSelected.planetInfos && <p>População {context.personSelected.planetInfos.population}</p>}
+
+
+                    {context.personSelected.starshipInfos && context.personSelected.starshipInfos.length > 0 &&
+                        <Subtitle>Nave</Subtitle>
+                    }
+                    {context.personSelected.starshipInfos && context.personSelected.starshipInfos.length > 0 && context.personSelected.starshipInfos.map((starship, index) => (
+                        <p key={starship.name + index}>Nave {starship.name}</p>
+                    ))}
+
+                    {context.personSelected.specieInfos && context.personSelected.specieInfos.length > 0 &&
+                        <Subtitle>Espécie</Subtitle>
+                    }
+                    {context.personSelected.specieInfos && context.personSelected.specieInfos.length > 0 && context.personSelected.specieInfos.map((specie, index) => (
+                        <p key={specie.name + index}>Espécie {specie.name}</p>
+                    ))}
+                </Modal>
+            </Container>
+            </>
+            )}
+        </>
+)}
 
 export default ModalCard

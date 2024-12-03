@@ -13,7 +13,8 @@
   -moz-osx-font-smoothing: grayscale;
 
   --background-image: url('./assets/background.jpg');
-  --white: #FFF
+  --white: #FFF;
+  --black: #000;
 }
 
 a {
@@ -34,7 +35,7 @@ body {
   padding: 32px 16px;
   
   background: var(--background-image);
-  background-size: contain; /* Ajusta a imagem para cobrir todo o fundo */
+  background-size: cover; /* Ajusta a imagem para cobrir todo o fundo */
   background-position: top; /* Centraliza a imagem */
   background-repeat: no-repeat; /* Evita a repetição da imagem */
 

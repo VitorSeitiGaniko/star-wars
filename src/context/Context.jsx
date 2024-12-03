@@ -5,11 +5,19 @@ export const ContextPeople = React.createContext()
 export function ContextProvider({ children }) {
     const [peopleArray, setPeopleArray] = React.useState([])
     const [peopleFilteredArray, setPeopleFilteredArray] = React.useState([])
-    const [isSearchList, setUsSearchList] = React.useState(false)
     const [planetArray, setPlanetArray] = React.useState([])
     const [starshipArray, setStarshipArray] = React.useState([])
-    const [block, setBlock] = React.useState(false)
+    const [specieArray, setSpecieArray] = React.useState([])
+    const [isFilterList, setIsFilterList] = React.useState(false)
+
+    const [personSelected, setPersonSelected] = React.useState('')
+    const [allowPush, setAllowPush] = React.useState(true)
     const [remove, setRemove] = React.useState(false)
+    const [loading, setLoading] = React.useState(true)
+    const [openModal, setOpenModal] = React.useState(false)
+
+    const [nextPage, setNextPage] = React.useState('')
+    const [prevPage, setPrevPage] = React.useState('')
 
     return (
         <ContextPeople.Provider value={{ 
@@ -21,12 +29,24 @@ export function ContextProvider({ children }) {
             setPlanetArray, 
             starshipArray,
             setStarshipArray,
-            isSearchList, 
-            setUsSearchList,
-            block,
-            setBlock,
+            specieArray,
+            setSpecieArray,
+            isFilterList, 
+            setIsFilterList,
             remove,
-            setRemove
+            setRemove,
+            loading,
+            setLoading,
+            openModal,
+            setOpenModal,
+            personSelected,
+            setPersonSelected,
+            nextPage,
+            setNextPage,
+            prevPage,
+            setPrevPage,
+            allowPush,
+            setAllowPush
         }}>
             {children}
         </ContextPeople.Provider>
