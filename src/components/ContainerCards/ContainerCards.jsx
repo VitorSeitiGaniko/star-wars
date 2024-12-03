@@ -6,7 +6,17 @@ import { ContextPeople } from '../../context/Context'
 const CardContainer = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 30px;
+    margin-top: 52px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    @media (min-width: 768px) and (max-width: 1170px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
 `
 
 function ContainerCards() {
@@ -29,6 +39,7 @@ function ContainerCards() {
                 context.setStarshipArray([])
                 context.setSpecieArray([])
                 context.setPeopleArray(data.results)
+                context.setPeopleArrayLength(data.results.length)
                 context.setRemove(true)
 
                 if(data.previous) context.setPrevPage(data.previous)

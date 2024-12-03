@@ -32,7 +32,7 @@ const Modal = styled.div`
     flex-direction: column;
     justify-content: space-between;
     height: 80vh;
-    width: 600px;
+    width: 520px;
     padding: 32px;
     color: var(--black);
     overflow-y: auto;
@@ -49,16 +49,43 @@ const Title = styled.h2`
     font-size: 24px;
     font-weight: 700;
     color: var(--black);
+    text-align: center;
+    margin: 16px 0;
 `
 
 const Subtitle = styled.h3`
     font-size: 20px;
     font-weight: 700;
     color: var(--black);
+    text-align: center;
+    margin: 0;
+    margin-top: 24px;
+`
+
+const Paragraph = styled.p`
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--black);
+    text-align: center;
+    margin: 0;
+    margin-top: 12px;
+
+    > span{
+        margin-left: 8px;
+
+        &:first-of-type{
+            font-weight: 700;
+        }
+    }
 `
 
 function ModalCard() {
     const context = React.useContext(ContextPeople)
+
+    function formatHeight(heightInCm) {
+        const heightInMeters = heightInCm / 100;
+        return `${heightInMeters}m`;
+    }
 
     return (
         <>
@@ -69,34 +96,72 @@ function ModalCard() {
             <Container>
                 <Modal>
                     <Image src={context.personSelected.image || unknownImage} alt={context.personSelected.person.name} />
-                    <Title>Nome: {context.personSelected.person.name}</Title>
-                    <p>Altura(m) {context.personSelected.person.height}</p>
-                    <p>Peso(Kg) {context.personSelected.person.mass}</p>
-                    <p>Gênero {context.personSelected.person.gender}</p>
-                    <p>Ano de Nascimento {context.personSelected.person.birth_year}</p>
-                    <p>Quantidade de filmes {context.personSelected.person.films.length}</p>
+                    <Title>{context.personSelected.person.name}</Title>
+                    <Paragraph>
+                        <span>Height:</span>
+                        <span>{formatHeight(context.personSelected.person.height)}</span>
+                    </Paragraph>
+                    <Paragraph>
+                        <span>Mass:</span>
+                        <span>{context.personSelected.person.mass}kg</span>
+                    </Paragraph>
+                    <Paragraph>
+                        <span>Gender:</span>
+                        <span>{context.personSelected.person.gender}</span>
+                    </Paragraph>
+                    <Paragraph>
+                        <span>Birth year:</span>
+                        <span>{context.personSelected.person.birth_year}</span>
+                    </Paragraph>
+                    <Paragraph>
+                        <span>Number of films:</span>
+                        <span>{context.personSelected.person.films.length}</span>
+                    </Paragraph>
 
                     {context.personSelected.planetInfos && (
-                        <Subtitle>Planeta</Subtitle>
+                        <Subtitle>Planet</Subtitle>
                     )}
-                    {context.personSelected.planetInfos && <p>Nome {context.personSelected.planetInfos.name}</p>}
-                    {context.personSelected.planetInfos && <p>Terreno {context.personSelected.planetInfos.terrain}</p>}
-                    {context.personSelected.planetInfos && <p>Clima {context.personSelected.planetInfos.climate}</p>}
-                    {context.personSelected.planetInfos && <p>População {context.personSelected.planetInfos.population}</p>}
-
+                    {context.personSelected.planetInfos && (
+                        <Paragraph>
+                            <span>Name:</span>
+                            <span>{context.personSelected.planetInfos.name}</span>
+                        </Paragraph>
+                    )}
+                    {context.personSelected.planetInfos && (
+                        <Paragraph>
+                            <span>Terrain:</span>
+                            <span>{context.personSelected.planetInfos.terrain}</span>
+                        </Paragraph>
+                    )}
+                    {context.personSelected.planetInfos && (
+                        <Paragraph>
+                            <span>Climate:</span>
+                            <span>{context.personSelected.planetInfos.climate}</span>
+                        </Paragraph>
+                    )}
+                    {context.personSelected.planetInfos && (
+                        <Paragraph>
+                            <span>Population:</span>
+                            <span>{context.personSelected.planetInfos.population}</span>
+                        </Paragraph>                
+                    )}
 
                     {context.personSelected.starshipInfos && context.personSelected.starshipInfos.length > 0 &&
-                        <Subtitle>Nave</Subtitle>
+                        <Subtitle>Starships</Subtitle>
                     }
                     {context.personSelected.starshipInfos && context.personSelected.starshipInfos.length > 0 && context.personSelected.starshipInfos.map((starship, index) => (
-                        <p key={starship.name + index}>Nave {starship.name}</p>
+                        <Paragraph key={starship.name + index}>
+                            <span>{starship.name}</span>
+                        </Paragraph>
                     ))}
 
                     {context.personSelected.specieInfos && context.personSelected.specieInfos.length > 0 &&
-                        <Subtitle>Espécie</Subtitle>
+                        <Subtitle>Species</Subtitle>
                     }
                     {context.personSelected.specieInfos && context.personSelected.specieInfos.length > 0 && context.personSelected.specieInfos.map((specie, index) => (
-                        <p key={specie.name + index}>Espécie {specie.name}</p>
+                        <Paragraph key={specie.name + index}>
+                            <span>{specie.name}</span> 
+                        </Paragraph>
                     ))}
                 </Modal>
             </Container>

@@ -4,6 +4,7 @@ export const ContextPeople = React.createContext()
 
 export function ContextProvider({ children }) {
     const [peopleArray, setPeopleArray] = React.useState([])
+    const [peopleArrayLength, setPeopleArrayLength] = React.useState([])
     const [peopleFilteredArray, setPeopleFilteredArray] = React.useState([])
     const [planetArray, setPlanetArray] = React.useState([])
     const [starshipArray, setStarshipArray] = React.useState([])
@@ -14,10 +15,12 @@ export function ContextProvider({ children }) {
     const [allowPush, setAllowPush] = React.useState(true)
     const [remove, setRemove] = React.useState(false)
     const [loading, setLoading] = React.useState(true)
+    const [lazyLoading, setLazyLoading] = React.useState(false)
     const [openModal, setOpenModal] = React.useState(false)
 
     const [nextPage, setNextPage] = React.useState('')
     const [prevPage, setPrevPage] = React.useState('')
+    const [topic_Search, setTopic_Search] = React.useState(false)
 
     return (
         <ContextPeople.Provider value={{ 
@@ -46,7 +49,13 @@ export function ContextProvider({ children }) {
             prevPage,
             setPrevPage,
             allowPush,
-            setAllowPush
+            setAllowPush,
+            lazyLoading,
+            setLazyLoading,
+            topic_Search,
+            setTopic_Search,
+            peopleArrayLength,
+            setPeopleArrayLength
         }}>
             {children}
         </ContextPeople.Provider>

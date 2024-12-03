@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import loadingImage from '../../assets/loading.webp'
+import { ContextPeople } from '../../context/Context'
 
 const Overlay = styled.div`
     position: fixed;
@@ -9,7 +10,7 @@ const Overlay = styled.div`
     top: 0px;
     left: 0px;
     background-color: black;
-    opacity: 0.3;
+    opacity: 0.8;
     z-index: 9998;
 `
 
@@ -24,12 +25,18 @@ const Container = styled.div`
 `
 
 function Loading() {
+    const context = React.useContext(ContextPeople)
+
     return (
+        <>
+        {context.lazyLoading && (
         <Overlay>
             <Container>
                 <img src={loadingImage} alt="" />
             </Container>
         </Overlay>
+        )}
+        </>
     )
 }
 

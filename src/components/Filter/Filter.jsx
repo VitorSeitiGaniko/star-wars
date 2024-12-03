@@ -1,5 +1,83 @@
 import React from 'react'
 import { ContextPeople } from '../../context/Context'
+import styled from 'styled-components'
+
+const Container = styled.div`
+    width: 100%;
+`  	
+
+const Form = styled.form`
+    display: flex;
+    justify-content: space-between;
+    margin-top: 32px;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    @media (min-width: 768px) and (max-width: 1170px) {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+`
+
+const SelectContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`
+
+const Label = styled.label`
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+`
+
+const Select = styled.select`
+    border: none;
+    border-radius: 8px;
+    padding: 4px 28px;
+    margin-top: 4px;
+`
+
+const Button = styled.button`
+    border: none;
+    border-radius: 20px;
+    padding: 0 80px;
+    font-size: 16px;
+    font-weight: 700;
+    height: 42px;
+    cursor: pointer;
+
+    @media (max-width: 768px) {
+        width: 30%;
+        margin: auto;
+        padding: 0;
+    }
+
+    @media (min-width: 768px) and (max-width: 1170px) {
+        margin-top: 16px;
+    }
+`
+
+const ButtonClear = styled(Button)`
+    display: flex;
+    margin: auto;
+    margin-top: 32px;
+    padding: 12px 50px;
+    cursor: pointer;
+
+    @media (max-width: 768px) {
+        width: 129px;
+        height: auto;
+        padding: 11px;
+    }
+`
+
 
 function Filter() {
     const context = React.useContext(ContextPeople)
@@ -9,9 +87,8 @@ function Filter() {
     const [selectedSpecie, setSelectedSpecie] = React.useState('')
 
     function removeDuplicates() {
-        console.log('REMOVENDO');
-        
         context.setLoading(true)
+        context.setLazyLoading(true)
         const uniquePlanets = []
         const namePlanets = new Set()
 
@@ -46,6 +123,7 @@ function Filter() {
         context.setStarshipArray(uniqueStarships);
         context.setSpecieArray(uniqueSpecies);
         context.setLoading(false)
+        context.setLazyLoading(false)
         context.setAllowPush(false)
     }
 
@@ -71,11 +149,18 @@ function Filter() {
         context.setRemove(false)
     }
 
-    React.useEffect(() => {
-        console.log('context.planetArray.length ==> ', context.planetArray.length);
-        console.log('context.peopleArray.length ==> ', context.peopleArray.length);
-        console.log('context.remove ==> ', context.remove);
-        
+    function hasNoDuplicates(array) {
+        const seen = new Set();
+        for (const item of array) {
+            if (seen.has(item)) {
+                return false; // Encontrou um item duplicado
+            }
+            seen.add(item);
+        }
+        return true; // Não encontrou itens duplicados
+    }
+
+    React.useEffect(() => {        
         if(
            context.planetArray.length > 0 
            && context.planetArray.length === context.peopleArray.length
@@ -85,44 +170,66 @@ function Filter() {
         }
     }, [context.planetArray, context.isFilterList])
 
+    React.useEffect(() => {
+        if(
+            context.planetArray.length === context.peopleArrayLength &&
+            (
+                hasNoDuplicates(context.planetArray)
+                ||  hasNoDuplicates(context.starshipArray)
+                ||  hasNoDuplicates(context.specieArray)
+            )            
+        ) {
+            context.setLazyLoading(true)
+            removeDuplicates()
+        } else{
+            context.setLazyLoading(false)
+        }
+    }, [context.topic_Search])
+
   return (
     <>
         {!context.loading && (
-        <div>
-            <form>
-                <label>Planeta</label>
-                <select value={selectedPlanet} onChange={(e) => setSelectedPlanet(e.target.value)}>
-                    <option defaultValue="Selecione um planeta">
-                        Selecione um planeta
-                    </option>
-                    {context.planetArray && context.planetArray.length > 0 && context.planetArray.map((planet, index) => (
-                    <option key={planet.name + index} value={planet.url}>{planet.name}</option>
-                    ))}
-                </select>
+        <Container>
+            <Form>
+                <SelectContainer>
+                    <Label>Planeta</Label>
+                    <Select value={selectedPlanet} onChange={(e) => setSelectedPlanet(e.target.value)}>
+                        <option defaultValue="Selecione um planeta">
+                            Selecione um planeta
+                        </option>
+                        {context.planetArray && context.planetArray.length > 0 && context.planetArray.map((planet, index) => (
+                        <option key={planet.name + index} value={planet.url}>{planet.name}</option>
+                        ))}
+                    </Select>
+                </SelectContainer>
+                
+                <SelectContainer>
+                    <Label>Nave espacial</Label>
+                    <Select value={selectedStarship} onChange={(e) => setSelectedStarship(e.target.value)}>
+                        <option defaultValue="Selecione uma nave">
+                            Selecione uma nave
+                        </option>
+                        {context.starshipArray && context.starshipArray.length > 0 && context.starshipArray.map((planet, index) => (
+                        <option key={planet.name + index} value={planet.url}>{planet.name}</option>
+                        ))}
+                    </Select>
+                </SelectContainer>
 
-                <label>Nave espacial</label>
-                <select value={selectedStarship} onChange={(e) => setSelectedStarship(e.target.value)}>
-                    <option defaultValue="Selecione uma nave">
-                        Selecione uma nave
-                    </option>
-                    {context.starshipArray && context.starshipArray.length > 0 && context.starshipArray.map((planet, index) => (
-                    <option key={planet.name + index} value={planet.url}>{planet.name}</option>
-                    ))}
-                </select>
-
-                <label>Espécie</label>
-                <select value={selectedSpecie} onChange={(e) => setSelectedSpecie(e.target.value)}>
-                    <option defaultValue="Selecione uma espécie">
-                        Selecione uma espécie
-                    </option>
-                    {context.specieArray && context.specieArray.length > 0 && context.specieArray.map((specie, index) => (
-                    <option key={specie.name + index} value={specie.url}>{specie.name}</option>
-                    ))}
-                </select>
-                <button onClick={applyCombinedFilter}>Pesquisar</button>
-            </form>
-            <button onClick={cleanFilter}>LIMPAR</button>
-        </div>
+                <SelectContainer>
+                    <Label>Espécie</Label>
+                    <Select value={selectedSpecie} onChange={(e) => setSelectedSpecie(e.target.value)}>
+                        <option defaultValue="Selecione uma espécie">
+                            Selecione uma espécie
+                        </option>
+                        {context.specieArray && context.specieArray.length > 0 && context.specieArray.map((specie, index) => (
+                        <option key={specie.name + index} value={specie.url}>{specie.name}</option>
+                        ))}
+                    </Select>
+                    </SelectContainer>
+                <Button onClick={applyCombinedFilter}>Filtrar</Button>
+            </Form>
+            <ButtonClear onClick={cleanFilter}>Limpar Filtros</ButtonClear>
+        </Container>
         )}
     </>
   )

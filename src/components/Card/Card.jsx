@@ -7,6 +7,7 @@ import unknownImage from '../../assets/unknown.png'
 const CardBox = styled.div`
     border: none;
     border-radius: 8px;
+    cursor: pointer;
 
     width: 330px;
     height: 270px;
@@ -19,6 +20,21 @@ const CardBox = styled.div`
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    transition: transform 0.3s ease-in-out;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 375px) {
+        width: 120px;
+        height: 170px;
+    }
+
+    @media (min-width: 376px) and (max-width: 768px) {
+        width: 140px;
+        height: 170px;
+    }
 `
 
 const CardImage = styled.img`
@@ -26,6 +42,10 @@ const CardImage = styled.img`
     height: 200px;
     object-fit: cover;
     border-radius: 6px;
+
+    @media (max-width: 768px) {
+        height: 90px;
+    }
 `
 
 const Title = styled.h2`
@@ -41,6 +61,11 @@ const ImageLoading = styled.img`
     width: 330px;
     height: 270px;
     opacity: 0.5;
+
+    @media (max-width: 768px) {
+        width: 140px;
+        height: 170px;
+    }
 `
 
 function Card({person, filter}) {
